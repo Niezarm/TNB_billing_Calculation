@@ -1,0 +1,124 @@
+#TNB METER
+utility_meter:
+  daily_energy:
+    source: sensor.energy_consumed
+    cycle: daily
+  monthly_energy:
+    source: sensor.energy_consumed
+    cycle: monthly
+    offset:
+     days: 14 #hari pada bacaan meter bermula
+
+sensor:
+#TNB energy reading
+  - platform: integration
+    name: Energy Consumed
+    source: sensor.sonoff_1000fcfead_power #sensor device dalam watt
+
+  - platform: template
+    sensors:
+          daily_power_kw:
+            friendly_name: "Daily kWh"
+            unit_of_measurement: "kWh"
+            value_template: >
+              {% set C = states('sensor.daily_energy') | float %}
+              {{ (C / 1000) |round(2) }} 
+            icon_template: mdi:counter
+          monthly_power_kw:
+            friendly_name: "Monthly kWh"
+            unit_of_measurement: "kWh"
+            value_template: >
+              {% set C = states('sensor.monthly_energy') | float %}
+              {{ (C / 1000) |round(2) }}
+            icon_template: mdi:counter
+
+#Bacaan Blok TNB
+  - platform: template
+    sensors:
+      2ndbill_tnb_rm:
+        friendly_name: "2nd Jumlah Bill TNB"
+        unit_of_measurement: 'RM'
+        icon_template: mdi:currency-usd
+        value_template: >
+          {% if states('sensor.monthly_power_kw') | float < 201 %}
+            {% set Y = states('sensor.monthly_power_kw') | float %}
+            {{ (Y * 0.218) |round(2) }}
+          {% elif states('sensor.monthly_power_kw') | float >= 201 %}
+            43.60
+          {%- else %}
+            Unknown
+          {%- endif %}
+          
+  - platform: template
+    sensors:
+      3rdbill_tnb_rm:
+        friendly_name: "3rd Jumlah Bill TNB"
+        unit_of_measurement: 'RM'
+        icon_template: mdi:currency-usd
+        value_template: >
+          {% if states('sensor.monthly_power_kw') | float <= 200 %}
+            0
+          {% elif states('sensor.monthly_power_kw') | float >= 301 %}
+            33.40
+          {% elif states('sensor.monthly_power_kw') | float >= 201 < 300 %}
+            {% set E = states('sensor.monthly_power_kw') | float - 200 %}
+            {{ (E * 0.334) |round(2) }}
+          {% elif states('sensor.monthly_power_kw') | float >= 301 %}
+            33.40
+          {%- else %}
+            Unknown
+          {%- endif %}
+
+  - platform: template
+    sensors:
+      4thbill_tnb_rm:
+        friendly_name: "4th Jumlah Bill TNB"
+        unit_of_measurement: 'RM'
+        icon_template: mdi:currency-usd
+        value_template: >
+          {% if states('sensor.monthly_power_kw') | float <= 300 %}
+            0
+          {% elif states('sensor.monthly_power_kw') | float >= 601 %}
+            154.80
+          {% elif states('sensor.monthly_power_kw') | float >= 301 < 600 %}
+            {% set F = states('sensor.monthly_power_kw') | float - 300 %}
+            {{ (F * 0.516) |round(2) }}
+          {% elif states('sensor.monthly_power_kw') | float >= 601 %}
+            154.80
+          {%- else %}
+            Unknown
+          {%- endif %}
+
+  - platform: template
+    sensors:
+      5thbill_tnb_rm:
+        friendly_name: "5th Jumlah Bill TNB"
+        unit_of_measurement: 'RM'
+        icon_template: mdi:currency-usd
+        value_template: >
+          {% if states('sensor.monthly_power_kw') | float <= 600 %}
+            0
+          {% elif states('sensor.monthly_power_kw') | float >= 901 %}
+            163.80
+          {% elif states('sensor.monthly_power_kw') | float >= 601 < 900 %}
+            {% set G = states('sensor.monthly_power_kw') | float - 600 %}
+            {{ (G * 0.546) |round(2) }}
+          {% elif states('sensor.monthly_power_kw') | float >= 901 %}
+            163.80
+          {%- else %}
+            Unknown
+          {%- endif %}
+
+#Jumblah Bill TNB
+  - platform: template
+    sensors:
+      to_bill_tnb_rm:
+        friendly_name: "Total Bill TNB"
+        unit_of_measurement: 'RM'
+        icon_template: mdi:currency-usd
+        value_template: >
+          {% set H = states('sensor.2ndbill_tnb_rm') | float %}
+          {% set I = states('sensor.3rdbill_tnb_rm') | float %}
+          {% set J = states('sensor.4thbill_tnb_rm') | float %}
+          {% set K = states('sensor.5thbill_tnb_rm') | float %}
+          {{ (H + I + J + K) |round(2) }}
