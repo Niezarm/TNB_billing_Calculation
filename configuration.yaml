@@ -3,11 +3,15 @@ utility_meter:
   daily_energy:
     source: sensor.energy_consumed
     cycle: daily
+    tariffs:
+     - normal
+
   monthly_energy:
     source: sensor.energy_consumed
-    cycle: monthly
-    offset:
-     days: 14 #hari pada bacaan meter bermula
+    cycle: yearly
+    tariffs:
+     - normal
+  
 
 sensor:
 #TNB energy reading
