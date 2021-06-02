@@ -1,0 +1,13 @@
+alias: Monthly TNB Reset Bill
+description: 'Reset TNB bill every day 13 of month'
+trigger:
+  - platform: time
+    at: '00:00'
+condition:
+  - condition: template
+    value_template: '{{ (now().strftime("%d") | int) == 13 }}'
+action:
+  - service: utility_meter.reset
+    data:
+      entity_id: utility_meter.monthly_energy
+mode: single
