@@ -1,11 +1,12 @@
+# create automation setting
 alias: Monthly TNB Reset Bill
 description: 'Reset TNB bill every day 13 of month'
 trigger:
   - platform: time
-    at: '00:00'
+    at: '00:00' # waktu reset 
 condition:
   - condition: template
-    value_template: '{{ (now().strftime("%d") | int) == 13 }}'
+    value_template: '{{ (now().strftime("%d") | int) == 13 }}' # tarikh bacaan TNB 13hb setiap bulan
 action:
   - service: utility_meter.reset
     data:
