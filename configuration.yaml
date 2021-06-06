@@ -25,14 +25,14 @@ sensor:
             friendly_name: "Daily kWh"
             unit_of_measurement: "kWh"
             value_template: >
-              {% set C = states('sensor.daily_energy') | float %}
+              {% set C = states('sensor.daily_energy_normal') | float %}
               {{ (C / 1000) |round(3) }} 
             icon_template: mdi:counter
           monthly_power_kw:
             friendly_name: "Monthly kWh"
             unit_of_measurement: "kWh"
             value_template: >
-              {% set C = states('sensor.monthly_energy') | float %}
+              {% set C = states('sensor.monthly_energy_normal') | float %}
               {{ (C / 1000) |round(3) }}
             icon_template: mdi:counter
 
